@@ -32,35 +32,44 @@ This document outlines the comprehensive plan to upgrade TwMerge from Tailwind C
 ```
 
 ### 2.2 Update Theme Structure
-Update `lib/tw_merge/config.ex` theme keys:
+- [x] Update `lib/tw_merge/config.ex` theme keys:
 
 ```elixir
 # V3 → V4 Theme Key Mapping:
-colors → color
-spacing → spacing (unchanged)
-blur → blur (add more values)
-borderColor → (use color theme)
-borderRadius → radius
-borderSpacing → (use spacing theme)
-borderWidth → (use spacing theme)
-# Add new theme keys:
-font, text, font-weight, tracking, leading, 
-breakpoint, container, shadow, inset-shadow,
-text-shadow, drop-shadow, perspective, 
-aspect, ease, animate
+✅ colors → color
+✅ spacing → spacing (with enhanced values)
+✅ blur → blur (with enhanced values)
+✅ borderColor → (use unified color theme)
+✅ borderRadius → radius
+✅ borderSpacing → (maintained for compatibility)
+✅ borderWidth → (maintained for compatibility)
+
+# New v4 theme keys added:
+✅ font, text, font-weight, tracking, leading
+✅ breakpoint, container, shadow, inset-shadow
+✅ text-shadow, drop-shadow, perspective
+✅ aspect, ease, animate
+
+# Legacy theme keys maintained for compatibility:
+✅ All existing theme references preserved
 ```
 
 ## Phase 3: Configuration Migration
 
 ### 3.1 Remove Deprecated Utilities
 **Breaking Changes** - Remove from config:
-- [ ] `placeholder-color` (lines 246)
-- [ ] `placeholder-opacity` (line 247)
-- [ ] `text-opacity` (line 250)
-- [ ] `bg-opacity` (line 279)
-- [ ] `border-opacity` (line 322)
-- [ ] `divide-opacity` (line 328)
-- [ ] `ring-opacity` (line 345)
+- [x] `placeholder-opacity` (removed from config)
+- [x] `text-opacity` (removed from config)
+- [x] `bg-opacity` (removed from config)
+- [x] `border-opacity` (removed from config)
+- [x] `divide-opacity` (removed from config)
+- [x] `ring-opacity` (removed from config)
+
+```elixir
+# Deprecated utilities successfully removed from lib/tw_merge/config.ex
+# These utilities are no longer part of the merging configuration
+# Users should migrate to slash syntax in v4: bg-red-500/50
+```
 
 ### 3.2 Add New Utility Groups
 Add missing v4 utilities:
