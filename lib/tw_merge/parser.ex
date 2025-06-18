@@ -4,10 +4,15 @@ defmodule TwMerge.Parser do
 
   @chars [?a..?z, ?A..?Z, ?0..?9, 45, ?_, ?., ?,, ?@, ?{, ?}, ?(, ?), ?>, ?*, ?&, ?', ?%, ?#]
 
+  # For modifiers, we exclude parentheses to avoid conflicts with arbitrary variables
+  modifier_chars = ascii_string(@chars -- [?(, ?)], min: 1)
+
+  # Regular chars should not contain opening parentheses at the end to allow arbitrary variables
+  regular_chars_strict = ascii_string(@chars -- [?(], min: 1)
   regular_chars = ascii_string(@chars, min: 1)
 
   modifier =
-    [parsec(:arbitrary), regular_chars]
+    [parsec(:arbitrary), modifier_chars]
     |> choice()
     |> times(min: 1)
     |> ignore(string(":"))
@@ -17,18 +22,32 @@ defmodule TwMerge.Parser do
 
   important = "!" |> string() |> unwrap_and_tag(:important)
 
+  # Try to parse sequences that can include arbitrary values/variables mixed with regular chars
   base =
-    [parsec(:arbitrary), parsec(:arbitrary_variable), regular_chars]
-    |> choice()
-    |> times(min: 1)
-    |> reduce({Enum, :join, [""]})
+    choice([
+      # First try: regular chars followed by arbitrary variable/value
+      regular_chars_strict
+      |> choice([
+        parsec(:arbitrary) |> reduce({Enum, :join, [""]}),
+        parsec(:arbitrary_variable) |> reduce({Enum, :join, [""]})
+      ])
+      |> reduce({Enum, :join, [""]}),
+      # Second try: just arbitrary variable/value
+      parsec(:arbitrary) |> reduce({Enum, :join, [""]}),
+      parsec(:arbitrary_variable) |> reduce({Enum, :join, [""]}),
+      # Last resort: regular chars only
+      regular_chars
+    ])
     |> unwrap_and_tag(:base)
 
   postfix =
     "/"
     |> string()
     |> ignore()
-    |> ascii_string([?a..?z, ?0..?9], min: 1)
+    |> choice([
+      parsec(:arbitrary) |> reduce({Enum, :join, [""]}),
+      ascii_string([?a..?z, ?0..?9, ?., ?%], min: 1)
+    ])
     |> unwrap_and_tag(:postfix)
 
   defparsec(
@@ -36,12 +55,25 @@ defmodule TwMerge.Parser do
     "["
     |> string()
     |> concat(
-      times(choice([parsec(:arbitrary), parsec(:arbitrary_variable), ascii_string(@chars ++ [?:, ?/], min: 1)]), min: 1)
+      times(
+        choice([
+          parsec(:arbitrary),
+          parsec(:arbitrary_variable),
+          ascii_string(@chars ++ [?:, ?/, ?<, ?>, ?;, ?+], min: 1)
+        ]),
+        min: 1
+      )
     )
     |> concat(string("]"))
   )
 
-  arbitrary_variable_content = ascii_string([?a..?z, ?A..?Z, ?0..?9, 45, ?_, ?., ?,, ?@, ?{, ?}, ?>, ?*, ?&, ?', ?%, ?#, ?:, ?/] -- [?(, ?)], min: 1)
+  # V4: Support for labeled arbitrary variables (e.g., color:--primary)
+  arbitrary_variable_content =
+    ascii_string(
+      [?a..?z, ?A..?Z, ?0..?9, 45, ?_, ?., ?,, ?@, ?{, ?}, ?>, ?*, ?&, ?', ?%, ?#, ?:, ?/] --
+        [?(, ?)],
+      min: 1
+    )
 
   defparsec(
     :arbitrary_variable,
@@ -58,5 +90,6 @@ defmodule TwMerge.Parser do
     |> concat(optional(important))
     |> concat(base)
     |> concat(optional(postfix))
+    |> concat(optional(important))
   )
 end
