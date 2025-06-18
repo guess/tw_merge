@@ -6,8 +6,8 @@ This document outlines the comprehensive plan to upgrade TwMerge from Tailwind C
 ## Phase 1: Preparation & Analysis
 
 ### 1.1 Create Feature Branch
-- [ ] Create `tailwind-v4-support` branch
-- [ ] Set up v4 compatibility testing environment
+- [x] Create `tailwind-v4-support` branch
+- [x] Set up v4 compatibility testing environment
 
 ### 1.2 Backup Current State
 - [ ] Document current v3 API for migration guide
