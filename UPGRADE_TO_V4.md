@@ -16,19 +16,19 @@ This document outlines the comprehensive plan to upgrade TwMerge from Tailwind C
 ## Phase 2: Core Infrastructure Updates
 
 ### 2.1 Add New Validators
-Create new validators in `lib/tw_merge/validator.ex`:
+- [x] Create new validators in `lib/tw_merge/validator.ex`:
 
 ```elixir
-# New v4 validators needed:
-- arbitrary_variable?/1
-- arbitrary_variable_length?/1
-- arbitrary_variable_image?/1
-- arbitrary_variable_position?/1
-- arbitrary_variable_shadow?/1
-- arbitrary_variable_size?/1
-- arbitrary_variable_family_name?/1
-- fraction?/1
-- percent?/1
+# New v4 validators implemented:
+✅ arbitrary_variable?/1
+✅ arbitrary_variable_length?/1
+✅ arbitrary_variable_image?/1
+✅ arbitrary_variable_position?/1
+✅ arbitrary_variable_shadow?/1
+✅ arbitrary_variable_size?/1
+✅ arbitrary_variable_family_name?/1
+✅ fraction?/1
+✅ any_non_arbitrary?/1
 ```
 
 ### 2.2 Update Theme Structure
