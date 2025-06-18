@@ -1,7 +1,7 @@
 defmodule TwMerge.Validator do
   @moduledoc false
-  @arbitrary_value_regex ~r/^\[(?:([a-z-]+):)?(.+)\]$/i
-  @arbitrary_variable_regex ~r/^\((?:([a-z-]+):)?(.+)\)$/i
+  @arbitrary_value_regex ~r/^\[(?:(\w[\w-]*):)?(.+)\]$/i
+  @arbitrary_variable_regex ~r/^\((?:(\w[\w-]*):)?(.+)\)$/i
   @fraction_regex ~r/^\d+\/\d+$/
   @tshirt_size_regex ~r/^(?:xs|sm|md|lg|xl|\d+(\.\d+)?xl)$/
   @image_regex ~r/^(url|image|image-set|cross-fade|element|(repeating-)?(linear|radial|conic)-gradient)\(.+\)$/

@@ -111,12 +111,14 @@ defmodule TwMerge.V4ParserTest do
 
     test "v4 arbitrary variables in complex scenarios" do
       # Mixed with regular classes and modifiers
-      result = merge([
-        "hover:bg-red-500", 
-        "focus:bg-(--primary)", 
-        "hover:bg-(--secondary)",
-        "bg-blue-300"
-      ])
+      result =
+        merge([
+          "hover:bg-red-500",
+          "focus:bg-(--primary)",
+          "hover:bg-(--secondary)",
+          "bg-blue-300"
+        ])
+
       assert result == "focus:bg-(--primary) hover:bg-(--secondary) bg-blue-300"
     end
   end

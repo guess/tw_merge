@@ -39,7 +39,8 @@ defmodule TwMerge.Class do
           parts -> parts
         end
 
-      group_recursive(parts, TwMerge.ClassTree.get()) || get_group_id_for_arbitrary_property(class)
+      group_recursive(parts, TwMerge.ClassTree.get()) ||
+        get_group_id_for_arbitrary_property(class)
     end
   end
 
@@ -49,6 +50,7 @@ defmodule TwMerge.Class do
       [_, prefix] ->
         # Remove trailing hyphen if present and split into parts
         prefix = String.trim_trailing(prefix, "-")
+
         parts =
           case String.split(prefix, "-") do
             ["" | parts] -> parts
@@ -65,7 +67,8 @@ defmodule TwMerge.Class do
             parts -> parts
           end
 
-        group_recursive(parts, TwMerge.ClassTree.get()) || get_group_id_for_arbitrary_property(class)
+        group_recursive(parts, TwMerge.ClassTree.get()) ||
+          get_group_id_for_arbitrary_property(class)
     end
   end
 

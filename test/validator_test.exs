@@ -424,7 +424,7 @@ defmodule TwMerge.ValidatorTest do
       assert arbitrary_variable?("(--new-var)")
       refute any_non_arbitrary?("[--old-var]")
       refute any_non_arbitrary?("(--new-var)")
-      
+
       # Both v3 and v4 syntax coexist
       assert arbitrary_value?("[length:20px]")
       assert arbitrary_variable_length?("(length:--spacing)")
@@ -438,12 +438,11 @@ defmodule TwMerge.ValidatorTest do
       refute arbitrary_variable?("unopened)")
       refute arbitrary_value?("[unclosed")
       refute arbitrary_value?("unopened]")
-      
+
       # Empty values
       refute arbitrary_variable?("")
       refute fraction?("")
       assert any_non_arbitrary?("")
     end
   end
-
 end
