@@ -73,25 +73,33 @@ This document outlines the comprehensive plan to upgrade TwMerge from Tailwind C
 
 ### 3.2 Add New Utility Groups
 Add missing v4 utilities:
-- [ ] `sr` (screen reader utilities)
-- [ ] `field-sizing`
-- [ ] `backdrop-*` utilities
-- [ ] `will-change`
-- [ ] `line-clamp` updates
-- [ ] `mask-*` utilities
-- [ ] `transform-style`
-- [ ] `rotate-x`, `rotate-y`, `rotate-z`
-- [ ] `scale-z`, `scale-3d`
-- [ ] `translate-z`
-- [ ] Additional position utilities
+- [x] `sr` (screen reader utilities)
+- [x] `field-sizing`
+- [x] `backdrop-*` utilities (updated with v4 arbitrary variable support)
+- [x] `will-change` (already present)
+- [x] `line-clamp` (already present)
+- [x] `mask-*` utilities (full mask suite added)
+- [x] `transform-style`
+- [x] `rotate-x`, `rotate-y`, `rotate-z`
+- [x] `scale-z`, `scale-3d`
+- [x] `translate-z`, `translate-none`
+- [x] `inset-shadow` utilities
 
-### 3.2 Update Existing Utilities
-- [ ] Update `shadow` scale (remove empty string default)
-- [ ] Update position utilities (mark deprecated combinations)
-- [ ] Update `shrink` and `grow` (already correct)
-- [ ] Update border radius (remove empty string)
-- [ ] Add new cursor values
-- [ ] Update animation utilities
+```elixir
+# New v4 utilities successfully added:
+✅ field-sizing: ["fixed", "content"]
+✅ mask-*: clip, composite, image, mode, origin, position, repeat, size, type
+✅ 3D transforms: rotate-x/y/z, scale-z/3d, translate-z, transform-style
+✅ inset-shadow: shadow utilities with inset support
+✅ Enhanced backdrop-*: all utilities support arbitrary variables
+```
+
+### 3.3 Update Existing Utilities
+- [x] Update `shadow` scale (enhanced with v4 arbitrary variable support)
+- [x] Update `inset-shadow` utilities (added missing utilities)
+- [x] Update `drop-shadow` (enhanced with v4 arbitrary variable support)
+- [x] Update border radius (enhanced with v4 arbitrary variable support)
+- [x] Update transform conflicts (added translate-z conflicts)
 
 ## Phase 4: Validator Implementation
 

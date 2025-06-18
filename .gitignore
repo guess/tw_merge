@@ -24,3 +24,4 @@ tw_merge-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+tailwind-merge/

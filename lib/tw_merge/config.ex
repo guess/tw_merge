@@ -25,7 +25,7 @@ defmodule TwMerge.Config do
       font: [&any_non_arbitrary?/1],
       "font-weight": [
         "thin",
-        "extralight", 
+        "extralight",
         "light",
         "normal",
         "medium",
@@ -34,16 +34,16 @@ defmodule TwMerge.Config do
         "extrabold",
         "black"
       ],
-      "inset-shadow": [&tshirt_size?/1],
+      "inset-shadow": ["none", &tshirt_size?/1, &arbitrary_variable?/1, &arbitrary_value?/1],
       leading: ["none", "tight", "snug", "normal", "relaxed", "loose"],
       perspective: ["dramatic", "near", "normal", "midrange", "distant", "none"],
-      radius: [&tshirt_size?/1],
-      shadow: [&tshirt_size?/1],
+      radius: ["", "none", "full", &tshirt_size?/1, &arbitrary_variable?/1, &arbitrary_value?/1],
+      shadow: ["", "inner", "none", &tshirt_size?/1, &arbitrary_variable?/1, &arbitrary_value?/1],
       spacing: ["px", &number?/1],
       text: [&tshirt_size?/1],
       "text-shadow": [&tshirt_size?/1],
       tracking: ["tighter", "tight", "normal", "wide", "wider", "widest"],
-      
+
       # Legacy theme keys for backward compatibility
       borderWidth: ["", &number?/1, &arbitrary_length?/1],
       borderSpacing: [&arbitrary_value?/1, &number?/1],
@@ -134,13 +134,21 @@ defmodule TwMerge.Config do
         "order" => %{"order" => ["first", "last", "none", &integer?/1, &arbitrary_value?/1]},
         "grid-cols" => %{"grid-cols" => [&any?/1]},
         "col-start-end" => %{
-          "col" => ["auto", %{"span" => ["full", &integer?/1, &arbitrary_value?/1]}, &arbitrary_value?/1]
+          "col" => [
+            "auto",
+            %{"span" => ["full", &integer?/1, &arbitrary_value?/1]},
+            &arbitrary_value?/1
+          ]
         },
         "col-start" => %{"col-start" => number_with_auto_and_arbitrary()},
         "col-end" => %{"col-end" => number_with_auto_and_arbitrary()},
         "grid-rows" => %{"grid-rows" => [&any?/1]},
         "row-start-end" => %{
-          "row" => ["auto", %{"span" => ["full", &integer?/1, &arbitrary_value?/1]}, &arbitrary_value?/1]
+          "row" => [
+            "auto",
+            %{"span" => ["full", &integer?/1, &arbitrary_value?/1]},
+            &arbitrary_value?/1
+          ]
         },
         "row-start" => %{"row-start" => number_with_auto_and_arbitrary()},
         "row-end" => %{"row-end" => number_with_auto_and_arbitrary()},
@@ -182,9 +190,21 @@ defmodule TwMerge.Config do
         "space-y" => %{"space-y" => [&from_theme(&1, "space")]},
         "space-y-reverse" => ["space-y-reverse"],
         "w" => %{
-          "w" => ["auto", "min", "max", "fit", "svw", "lvw", "dvw", &from_theme(&1, "spacing"), &arbitrary_value?/1]
+          "w" => [
+            "auto",
+            "min",
+            "max",
+            "fit",
+            "svw",
+            "lvw",
+            "dvw",
+            &from_theme(&1, "spacing"),
+            &arbitrary_value?/1
+          ]
         },
-        "min-w" => %{"min-w" => ["min", "max", "fit", &from_theme(&1, "spacing"), &arbitrary_value?/1]},
+        "min-w" => %{
+          "min-w" => ["min", "max", "fit", &from_theme(&1, "spacing"), &arbitrary_value?/1]
+        },
         "max-w" => %{
           "max-w" => [
             "none",
@@ -213,12 +233,32 @@ defmodule TwMerge.Config do
           ]
         },
         "min-h" => %{
-          "min-h" => ["min", "max", "fit", "svh", "lvh", "dvh", &from_theme(&1, "spacing"), &arbitrary_value?/1]
+          "min-h" => [
+            "min",
+            "max",
+            "fit",
+            "svh",
+            "lvh",
+            "dvh",
+            &from_theme(&1, "spacing"),
+            &arbitrary_value?/1
+          ]
         },
         "max-h" => %{
-          "max-h" => ["min", "max", "fit", "svh", "lvh", "dvh", &from_theme(&1, "spacing"), &arbitrary_value?/1]
+          "max-h" => [
+            "min",
+            "max",
+            "fit",
+            "svh",
+            "lvh",
+            "dvh",
+            &from_theme(&1, "spacing"),
+            &arbitrary_value?/1
+          ]
         },
-        "size" => %{"size" => ["auto", "min", "max", "fit", &from_theme(&1, "spacing"), &arbitrary_value?/1]},
+        "size" => %{
+          "size" => ["auto", "min", "max", "fit", &from_theme(&1, "spacing"), &arbitrary_value?/1]
+        },
         "font-size" => %{"text" => ["base", &tshirt_size?/1, &arbitrary_length?/1]},
         "font-smoothing" => ["antialiased", "subpixel-antialiased"],
         "font-style" => ["italic", "not-italic"],
@@ -275,7 +315,9 @@ defmodule TwMerge.Config do
         "text-color" => %{"text" => [&from_theme(&1, "color")]},
         "text-decoration" => ["underline", "overline", "line-through", "no-underline"],
         "text-decoration-style" => %{"decoration" => [line_styles(), "wavy"]},
-        "text-decoration-thickness" => %{"decoration" => ["auto", "from-font", &length?/1, &arbitrary_length?/1]},
+        "text-decoration-thickness" => %{
+          "decoration" => ["auto", "from-font", &length?/1, &arbitrary_length?/1]
+        },
         "underline-offset" => %{"underline-offset" => ["auto", &length?/1, &arbitrary_value?/1]},
         "text-decoration-color" => %{"decoration" => [&from_theme(&1, "color")]},
         "text-transform" => ["uppercase", "lowercase", "capitalize", "normal-case"],
@@ -295,7 +337,9 @@ defmodule TwMerge.Config do
             &arbitrary_value?/1
           ]
         },
-        "whitespace" => %{"whitespace" => ["normal", "nowrap", "pre", "pre-line", "pre-wrap", "break-spaces"]},
+        "whitespace" => %{
+          "whitespace" => ["normal", "nowrap", "pre", "pre-line", "pre-wrap", "break-spaces"]
+        },
         "break" => %{"break" => ["normal", "words", "all", "keep"]},
         "hyphens" => %{"hyphens" => ["none", "manual", "auto"]},
         "content" => %{"content" => ["none", &arbitrary_value?/1]},
@@ -366,8 +410,26 @@ defmodule TwMerge.Config do
         "ring-color" => %{"ring" => [&from_theme(&1, "color")]},
         "ring-offset-w" => %{"ring-offset" => [&length?/1, &arbitrary_length?/1]},
         "ring-offset-color" => %{"ring-offset" => [&from_theme(&1, "color")]},
-        "shadow" => %{"shadow" => ["inner", "none", &from_theme(&1, "shadow"), &arbitrary_variable_shadow?/1, &arbitrary_shadow?/1]},
+        "shadow" => %{
+          "shadow" => [
+            "inner",
+            "none",
+            &from_theme(&1, "shadow"),
+            &arbitrary_variable_shadow?/1,
+            &arbitrary_shadow?/1
+          ]
+        },
         "shadow-color" => %{"shadow" => [&from_theme(&1, "color")]},
+        "inset-shadow" => %{
+          "inset-shadow" => [
+            "",
+            "none",
+            &from_theme(&1, "inset-shadow"),
+            &arbitrary_variable_shadow?/1,
+            &arbitrary_shadow?/1
+          ]
+        },
+        "inset-shadow-color" => %{"inset-shadow" => [&from_theme(&1, "color")]},
         "opacity" => %{"opacity" => [&from_theme(&1, "opacity")]},
         "mix-blend" => %{"mix-blend" => [blend_modes(), "plus-lighter", "plus-darker"]},
         "bg-blend" => %{"bg-blend" => blend_modes()},
@@ -375,22 +437,69 @@ defmodule TwMerge.Config do
         "blur" => %{"blur" => [&from_theme(&1, "blur")]},
         "brightness" => %{"brightness" => [&from_theme(&1, "brightness")]},
         "contrast" => %{"contrast" => [&from_theme(&1, "contrast")]},
-        "drop-shadow" => %{"drop-shadow" => ["", "none", &tshirt_size?/1, &arbitrary_value?/1]},
+        "drop-shadow" => %{
+          "drop-shadow" => [
+            "none",
+            &from_theme(&1, "drop-shadow"),
+            &arbitrary_variable_shadow?/1,
+            &arbitrary_value?/1
+          ]
+        },
         "grayscale" => %{"grayscale" => [&from_theme(&1, "grayscale")]},
         "hue-rotate" => %{"hue-rotate" => [&from_theme(&1, "hueRotate")]},
         "invert" => %{"invert" => [&from_theme(&1, "invert")]},
         "saturate" => %{"saturate" => [&from_theme(&1, "saturate")]},
         "sepia" => %{"sepia" => [&from_theme(&1, "sepia")]},
-        "backdrop-filter" => %{"backdrop-filter" => ["", "none"]},
-        "backdrop-blur" => %{"backdrop-blur" => [&from_theme(&1, "blur")]},
-        "backdrop-brightness" => %{"backdrop-brightness" => [&from_theme(&1, "brightness")]},
-        "backdrop-contrast" => %{"backdrop-contrast" => [&from_theme(&1, "contrast")]},
-        "backdrop-grayscale" => %{"backdrop-grayscale" => [&from_theme(&1, "grayscale")]},
-        "backdrop-hue-rotate" => %{"backdrop-hue-rotate" => [&from_theme(&1, "hueRotate")]},
-        "backdrop-invert" => %{"backdrop-invert" => [&from_theme(&1, "invert")]},
-        "backdrop-opacity" => %{"backdrop-opacity" => [&from_theme(&1, "opacity")]},
-        "backdrop-saturate" => %{"backdrop-saturate" => [&from_theme(&1, "saturate")]},
-        "backdrop-sepia" => %{"backdrop-sepia" => [&from_theme(&1, "sepia")]},
+        "backdrop-filter" => %{
+          "backdrop-filter" => ["", "none", &arbitrary_variable?/1, &arbitrary_value?/1]
+        },
+        "backdrop-blur" => %{
+          "backdrop-blur" => [
+            &from_theme(&1, "blur"),
+            &arbitrary_variable?/1,
+            &arbitrary_value?/1
+          ]
+        },
+        "backdrop-brightness" => %{
+          "backdrop-brightness" => [&number?/1, &arbitrary_variable?/1, &arbitrary_value?/1]
+        },
+        "backdrop-contrast" => %{
+          "backdrop-contrast" => [&number?/1, &arbitrary_variable?/1, &arbitrary_value?/1]
+        },
+        "backdrop-grayscale" => %{
+          "backdrop-grayscale" => ["", &number?/1, &arbitrary_variable?/1, &arbitrary_value?/1]
+        },
+        "backdrop-hue-rotate" => %{
+          "backdrop-hue-rotate" => [&number?/1, &arbitrary_variable?/1, &arbitrary_value?/1]
+        },
+        "backdrop-invert" => %{
+          "backdrop-invert" => ["", &number?/1, &arbitrary_variable?/1, &arbitrary_value?/1]
+        },
+        "backdrop-opacity" => %{
+          "backdrop-opacity" => [&number?/1, &arbitrary_variable?/1, &arbitrary_value?/1]
+        },
+        "backdrop-saturate" => %{
+          "backdrop-saturate" => [&number?/1, &arbitrary_variable?/1, &arbitrary_value?/1]
+        },
+        "backdrop-sepia" => %{
+          "backdrop-sepia" => ["", &number?/1, &arbitrary_variable?/1, &arbitrary_value?/1]
+        },
+        "mask-clip" => %{
+          "mask-clip" => ["border", "padding", "content", "fill", "stroke", "view"]
+        },
+        "mask-no-clip" => ["mask-no-clip"],
+        "mask-composite" => %{"mask" => ["add", "subtract", "intersect", "exclude"]},
+        "mask-image" => %{"mask" => ["none", &arbitrary_variable?/1, &arbitrary_value?/1]},
+        "mask-mode" => %{"mask" => ["alpha", "luminance", "match"]},
+        "mask-origin" => %{
+          "mask-origin" => ["border", "padding", "content", "fill", "stroke", "view"]
+        },
+        "mask-position" => %{"mask" => [positions(), &arbitrary_position?/1]},
+        "mask-repeat" => %{
+          "mask" => ["no-repeat", %{"repeat" => ["", "x", "y", "round", "space"]}]
+        },
+        "mask-size" => %{"mask" => ["auto", "cover", "contain", &arbitrary_size?/1]},
+        "mask-type" => %{"mask-type" => ["alpha", "luminance"]},
         "border-collapse" => %{"border" => ["collapse", "separate"]},
         "border-spacing" => %{"border-spacing" => [&from_theme(&1, "borderSpacing")]},
         "border-spacing-x" => %{"border-spacing-x" => [&from_theme(&1, "borderSpacing")]},
@@ -412,14 +521,25 @@ defmodule TwMerge.Config do
         "duration" => %{"duration" => number_and_arbitrary()},
         "ease" => %{"ease" => ["linear", "in", "out", "in-out", &arbitrary_value?/1]},
         "delay" => %{"delay" => number_and_arbitrary()},
-        "animate" => %{"animate" => ["none", "spin", "ping", "pulse", "bounce", &arbitrary_value?/1]},
+        "animate" => %{
+          "animate" => ["none", "spin", "ping", "pulse", "bounce", &arbitrary_value?/1]
+        },
         "transform" => %{"transform" => ["", "gpu", "none"]},
+        "transform-style" => %{"transform" => ["3d", "flat"]},
         "scale" => %{"scale" => [&from_theme(&1, "scale")]},
         "scale-x" => %{"scale-x" => [&from_theme(&1, "scale")]},
         "scale-y" => %{"scale-y" => [&from_theme(&1, "scale")]},
+        "scale-z" => %{"scale-z" => [&from_theme(&1, "scale")]},
+        "scale-3d" => ["scale-3d"],
         "rotate" => %{"rotate" => [&integer?/1, &arbitrary_value?/1]},
+        "rotate-x" => %{"rotate-x" => [&integer?/1, &arbitrary_value?/1]},
+        "rotate-y" => %{"rotate-y" => [&integer?/1, &arbitrary_value?/1]},
+        "rotate-z" => %{"rotate-z" => [&integer?/1, &arbitrary_value?/1]},
+        "translate" => %{"translate" => [&from_theme(&1, "translate")]},
         "translate-x" => %{"translate-x" => [&from_theme(&1, "translate")]},
         "translate-y" => %{"translate-y" => [&from_theme(&1, "translate")]},
+        "translate-z" => %{"translate-z" => [&from_theme(&1, "translate")]},
+        "translate-none" => ["translate-none"],
         "skew-x" => %{"skew-x" => [&from_theme(&1, "skew")]},
         "skew-y" => %{"skew-y" => [&from_theme(&1, "skew")]},
         "transform-origin" => %{
@@ -510,7 +630,10 @@ defmodule TwMerge.Config do
         "touch-y" => %{"touch-pan" => ["y", "up", "down"]},
         "touch-pz" => ["touch-pinch-zoom"],
         "select" => %{"select" => ["none", "text", "all", "auto"]},
-        "will-change" => %{"will-change" => ["auto", "scroll", "contents", "transform", &arbitrary_value?/1]},
+        "will-change" => %{
+          "will-change" => ["auto", "scroll", "contents", "transform", &arbitrary_value?/1]
+        },
+        "field-sizing" => %{"field-sizing" => ["fixed", "content", &arbitrary_value?/1]},
         "fill" => %{"fill" => [&from_theme(&1, "color"), "none"]},
         "stroke-w" => %{"stroke" => [&length?/1, &arbitrary_length?/1, &arbitrary_number?/1]},
         "stroke" => %{"stroke" => [&from_theme(&1, "color"), "none"]},
@@ -609,7 +732,9 @@ defmodule TwMerge.Config do
         "touch" => ["touch-x", "touch-y", "touch-pz"],
         "touch-x" => ["touch"],
         "touch-y" => ["touch"],
-        "touch-pz" => ["touch"]
+        "touch-pz" => ["touch"],
+        "translate" => ["translate-x", "translate-y", "translate-none"],
+        "translate-none" => ["translate", "translate-x", "translate-y", "translate-z"]
       },
       conflicting_group_modifiers: %{
         "font-size" => ["leading"]
@@ -707,9 +832,9 @@ defmodule TwMerge.Config do
     ]
   end
 
-  defp number do
-    [&number?/1, &arbitrary_number?/1]
-  end
+  # defp number do
+  #   [&number?/1, &arbitrary_number?/1]
+  # end
 
   defp number_and_arbitrary do
     [&number?/1, &arbitrary_value?/1]
