@@ -28,14 +28,45 @@ defmodule TwMerge.Class do
   end
 
   defp group(class) do
-    # Don't consider negation prefix.
-    parts =
-      case String.split(class, "-") do
-        ["" | parts] -> parts
-        parts -> parts
-      end
+    # Handle classes with arbitrary variables specially
+    if String.contains?(class, "(") and String.contains?(class, ")") do
+      group_with_arbitrary_variables(class)
+    else
+      # Standard v3 processing
+      parts =
+        case String.split(class, "-") do
+          ["" | parts] -> parts
+          parts -> parts
+        end
 
-    group_recursive(parts, TwMerge.ClassTree.get()) || get_group_id_for_arbitrary_property(class)
+      group_recursive(parts, TwMerge.ClassTree.get()) || get_group_id_for_arbitrary_property(class)
+    end
+  end
+
+  defp group_with_arbitrary_variables(class) do
+    # Extract the utility prefix before the first arbitrary variable
+    case Regex.run(~r/^([^(]+)\(/, class) do
+      [_, prefix] ->
+        # Remove trailing hyphen if present and split into parts
+        prefix = String.trim_trailing(prefix, "-")
+        parts =
+          case String.split(prefix, "-") do
+            ["" | parts] -> parts
+            parts -> parts
+          end
+
+        group_recursive(parts, TwMerge.ClassTree.get())
+
+      nil ->
+        # No arbitrary variable found, fallback to standard processing
+        parts =
+          case String.split(class, "-") do
+            ["" | parts] -> parts
+            parts -> parts
+          end
+
+        group_recursive(parts, TwMerge.ClassTree.get()) || get_group_id_for_arbitrary_property(class)
+    end
   end
 
   defp group_recursive([], %{"group" => group}), do: group
@@ -76,19 +107,38 @@ defmodule TwMerge.Class do
   end
 
   defp get_group_id_for_arbitrary_property(class_name) do
+    # Check for v3 arbitrary property syntax [property:value]
     arbitrary_property_regex = ~r/^\[(.+)\]$/
+    # Check for v4 arbitrary variable syntax (label:--variable)
+    arbitrary_variable_regex = ~r/^\((.+)\)$/
 
-    if Regex.match?(arbitrary_property_regex, class_name) do
-      [_, arbitrary_property_class_name] = Regex.run(arbitrary_property_regex, class_name)
+    cond do
+      Regex.match?(arbitrary_property_regex, class_name) ->
+        [_, arbitrary_property_class_name] = Regex.run(arbitrary_property_regex, class_name)
 
-      property =
-        arbitrary_property_class_name
-        |> String.split(":", parts: 2)
-        |> List.first()
+        property =
+          arbitrary_property_class_name
+          |> String.split(":", parts: 2)
+          |> List.first()
 
-      if property do
-        ".." <> property
-      end
+        if property do
+          ".." <> property
+        end
+
+      Regex.match?(arbitrary_variable_regex, class_name) ->
+        [_, arbitrary_variable_class_name] = Regex.run(arbitrary_variable_regex, class_name)
+
+        property =
+          arbitrary_variable_class_name
+          |> String.split(":", parts: 2)
+          |> List.first()
+
+        if property do
+          ".." <> property
+        end
+
+      true ->
+        nil
     end
   end
 
@@ -108,7 +158,7 @@ defmodule TwMerge.Class do
   def sort_modifiers(modifiers) do
     modifiers
     |> Enum.reduce({[], []}, fn modifier, {sorted, unsorted} ->
-      if String.starts_with?(modifier, "[") do
+      if String.starts_with?(modifier, "[") or String.starts_with?(modifier, "(") do
         {sorted ++ Enum.sort(unsorted) ++ [modifier], []}
       else
         {sorted, unsorted ++ [modifier]}

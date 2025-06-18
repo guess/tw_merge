@@ -3,7 +3,7 @@ defmodule TwMerge.Validator do
   @arbitrary_value_regex ~r/^\[(?:([a-z-]+):)?(.+)\]$/i
   @arbitrary_variable_regex ~r/^\((?:([a-z-]+):)?(.+)\)$/i
   @fraction_regex ~r/^\d+\/\d+$/
-  @tshirt_size_regex ~r/^(xs|sm|md|lg|(\d+(\.\d+)?)?xl)$/
+  @tshirt_size_regex ~r/^(?:xs|sm|md|lg|xl|\d+(\.\d+)?xl)$/
   @image_regex ~r/^(url|image|image-set|cross-fade|element|(repeating-)?(linear|radial|conic)-gradient)\(.+\)$/
   @color_function_regex ~r/^(rgba?|hsla?|hwb|(ok)?(lab|lch)|color-mix)\(.+\)$/
   @shadow_regex ~r/^(inset_)?-?((\d+)?\.?(\d+)[a-z]+|0)_-?((\d+)?\.?(\d+)[a-z]+|0)/
@@ -56,11 +56,11 @@ defmodule TwMerge.Validator do
   end
 
   def arbitrary_size?(value) do
-    arbitrary_value?(value, ~w(length size percentage), &never?/1)
+    arbitrary_value?(value, ~w(length size), &never?/1)
   end
 
   def arbitrary_position?(value) do
-    arbitrary_value?(value, "position", &never?/1)
+    arbitrary_value?(value, ~w(position percentage), &never?/1)
   end
 
   def arbitrary_image?(value) do

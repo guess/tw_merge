@@ -2,7 +2,7 @@ defmodule TwMerge.Parser do
   @moduledoc false
   import NimbleParsec
 
-  @chars [?a..?z, ?A..?Z, ?0..?9, ?-, ?_, ?., ?,, ?@, ?{, ?}, ?(, ?), ?>, ?*, ?&, ?', ?%, ?#]
+  @chars [?a..?z, ?A..?Z, ?0..?9, 45, ?_, ?., ?,, ?@, ?{, ?}, ?(, ?), ?>, ?*, ?&, ?', ?%, ?#]
 
   regular_chars = ascii_string(@chars, min: 1)
 
@@ -18,7 +18,7 @@ defmodule TwMerge.Parser do
   important = "!" |> string() |> unwrap_and_tag(:important)
 
   base =
-    [parsec(:arbitrary), regular_chars]
+    [parsec(:arbitrary), parsec(:arbitrary_variable), regular_chars]
     |> choice()
     |> times(min: 1)
     |> reduce({Enum, :join, [""]})
@@ -36,9 +36,19 @@ defmodule TwMerge.Parser do
     "["
     |> string()
     |> concat(
-      times(choice([parsec(:arbitrary), ascii_string(@chars ++ [?:, ?/], min: 1)]), min: 1)
+      times(choice([parsec(:arbitrary), parsec(:arbitrary_variable), ascii_string(@chars ++ [?:, ?/], min: 1)]), min: 1)
     )
     |> concat(string("]"))
+  )
+
+  arbitrary_variable_content = ascii_string([?a..?z, ?A..?Z, ?0..?9, 45, ?_, ?., ?,, ?@, ?{, ?}, ?>, ?*, ?&, ?', ?%, ?#, ?:, ?/] -- [?(, ?)], min: 1)
+
+  defparsec(
+    :arbitrary_variable,
+    "("
+    |> string()
+    |> concat(arbitrary_variable_content)
+    |> concat(string(")"))
   )
 
   defparsec(
