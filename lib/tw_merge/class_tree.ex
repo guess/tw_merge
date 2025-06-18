@@ -89,7 +89,12 @@ defmodule TwMerge.ClassTree do
   end
 
   defp add_nested_group([current | rest], sub_next, theme, group, acc) do
-    Map.update(acc, "next", %{}, &Map.put(&1, current, add_nested_group(rest, List.flatten(sub_next), theme, group, acc)))
+    Map.update(
+      acc,
+      "next",
+      %{},
+      &Map.put(&1, current, add_nested_group(rest, List.flatten(sub_next), theme, group, acc))
+    )
   end
 
   defp add_nested_group([], sub_next, theme, group, _acc) do
@@ -101,7 +106,12 @@ defmodule TwMerge.ClassTree do
   defp flatten_theme(function, theme, group, acc \\ %{"next" => %{}, "validators" => %{}}) do
     Enum.reduce(function.(theme), acc, fn
       item, acc when is_binary(item) ->
-        Map.update(acc, "next", %{}, &Map.put(&1, item, %{"next" => %{}, "validators" => %{}, "group" => group}))
+        Map.update(
+          acc,
+          "next",
+          %{},
+          &Map.put(&1, item, %{"next" => %{}, "validators" => %{}, "group" => group})
+        )
 
       item, acc when is_function(item) ->
         if from_theme?(item) do

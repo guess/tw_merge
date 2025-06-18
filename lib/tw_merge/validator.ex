@@ -69,7 +69,8 @@ defmodule TwMerge.Validator do
 
   def image?(value), do: Regex.match?(@image_regex, value)
 
-  def length_only?(value), do: Regex.match?(@length_unit_regex, value) and not Regex.match?(@color_function_regex, value)
+  def length_only?(value),
+    do: Regex.match?(@length_unit_regex, value) and not Regex.match?(@color_function_regex, value)
 
   def arbitrary_shadow?(value) do
     arbitrary_value?(value, "", &shadow?/1)
@@ -165,7 +166,6 @@ defmodule TwMerge.Validator do
   def fraction?(value) do
     Regex.match?(@fraction_regex, value)
   end
-
 
   @doc """
   Validates that a value is not an arbitrary value or arbitrary variable.

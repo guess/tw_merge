@@ -1,12 +1,12 @@
 defmodule TwMerge.V4NewUtilitiesTest do
   @moduledoc """
   Comprehensive tests for new v4 utilities added in Phase 3.2.
-  
+
   Tests all the new utility groups and enhanced utilities to ensure
   proper merging behavior and conflict resolution.
   """
   use ExUnit.Case
-  
+
   setup do
     start_supervised!(TwMerge.Cache)
     :ok
@@ -114,12 +114,13 @@ defmodule TwMerge.V4NewUtilitiesTest do
     end
 
     test "inset-shadow with arbitrary values" do
-      assert TwMerge.merge("inset-shadow inset-shadow-[0_4px_8px_rgba(0,0,0,0.1)]") == 
-        "inset-shadow-[0_4px_8px_rgba(0,0,0,0.1)]"
+      assert TwMerge.merge("inset-shadow inset-shadow-[0_4px_8px_rgba(0,0,0,0.1)]") ==
+               "inset-shadow-[0_4px_8px_rgba(0,0,0,0.1)]"
     end
 
     test "inset-shadow-color utilities" do
-      assert TwMerge.merge("inset-shadow-red-500 inset-shadow-blue-600") == "inset-shadow-blue-600"
+      assert TwMerge.merge("inset-shadow-red-500 inset-shadow-blue-600") ==
+               "inset-shadow-blue-600"
     end
 
     test "inset-shadow is independent of regular shadow" do
@@ -132,8 +133,9 @@ defmodule TwMerge.V4NewUtilitiesTest do
   describe "enhanced backdrop utilities" do
     test "backdrop utilities support arbitrary variables" do
       assert TwMerge.merge("backdrop-blur backdrop-blur-(--custom)") == "backdrop-blur-(--custom)"
-      assert TwMerge.merge("backdrop-brightness-50 backdrop-brightness-(--brightness)") == 
-        "backdrop-brightness-(--brightness)"
+
+      assert TwMerge.merge("backdrop-brightness-50 backdrop-brightness-(--brightness)") ==
+               "backdrop-brightness-(--brightness)"
     end
 
     test "backdrop utilities conflict correctly" do
@@ -142,8 +144,8 @@ defmodule TwMerge.V4NewUtilitiesTest do
     end
 
     test "backdrop-filter enhanced" do
-      assert TwMerge.merge("backdrop-filter-none backdrop-filter-(--custom)") == 
-        "backdrop-filter-(--custom)"
+      assert TwMerge.merge("backdrop-filter-none backdrop-filter-(--custom)") ==
+               "backdrop-filter-(--custom)"
     end
   end
 

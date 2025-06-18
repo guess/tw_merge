@@ -1,12 +1,12 @@
 defmodule TwMerge.V4Phase32Test do
   @moduledoc """
   Tests specifically for Phase 3.2 implementation - new v4 utilities.
-  
+
   These tests focus on the core functionality that was added and verify
   that the most important v4 utilities work correctly.
   """
   use ExUnit.Case
-  
+
   setup do
     start_supervised!(TwMerge.Cache)
     :ok
@@ -43,7 +43,7 @@ defmodule TwMerge.V4Phase32Test do
     test "inset-shadow utilities are present and work" do
       assert TwMerge.merge("inset-shadow inset-shadow-lg") == "inset-shadow-lg"
       assert TwMerge.merge("inset-shadow-sm inset-shadow-xl") == "inset-shadow-xl"
-      
+
       # Test independence from regular shadow
       result = TwMerge.merge("shadow-lg inset-shadow-sm")
       assert result == "shadow-lg inset-shadow-sm"
@@ -67,7 +67,7 @@ defmodule TwMerge.V4Phase32Test do
       assert TwMerge.merge("backdrop-grayscale backdrop-grayscale-0") == "backdrop-grayscale-0"
     end
 
-    test "enhanced border radius utilities work with v4 features" do  
+    test "enhanced border radius utilities work with v4 features" do
       # Test that border radius empty string conflicts work (key v4 change)
       assert TwMerge.merge("rounded rounded-lg") == "rounded-lg"
       assert TwMerge.merge("rounded-none rounded-full") == "rounded-full"
@@ -83,7 +83,7 @@ defmodule TwMerge.V4Phase32Test do
     test "new utilities don't break existing functionality" do
       # Test that adding new utilities doesn't break basic TwMerge functionality
       assert TwMerge.merge("bg-red-500 bg-blue-600") == "bg-blue-600"
-      assert TwMerge.merge("text-sm text-lg") == "text-lg" 
+      assert TwMerge.merge("text-sm text-lg") == "text-lg"
       assert TwMerge.merge("p-4 p-8") == "p-8"
       assert TwMerge.merge("w-full w-1/2") == "w-1/2"
     end

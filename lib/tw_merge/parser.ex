@@ -35,7 +35,9 @@ defmodule TwMerge.Parser do
     :arbitrary,
     "["
     |> string()
-    |> concat(times(choice([parsec(:arbitrary), ascii_string(@chars ++ [?:, ?/], min: 1)]), min: 1))
+    |> concat(
+      times(choice([parsec(:arbitrary), ascii_string(@chars ++ [?:, ?/], min: 1)]), min: 1)
+    )
     |> concat(string("]"))
   )
 

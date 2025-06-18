@@ -1,12 +1,12 @@
 defmodule TwMerge.V4CompatibilityTest do
   @moduledoc """
   Tests for Tailwind CSS v4 compatibility.
-  
+
   These tests verify that the library correctly handles v4 syntax and utilities.
   They will initially fail and should pass as v4 support is implemented.
   """
   use ExUnit.Case
-  
+
   setup do
     start_supervised!(TwMerge.Cache)
     :ok
@@ -17,25 +17,28 @@ defmodule TwMerge.V4CompatibilityTest do
     test "bg-opacity utilities should not be supported" do
       # In v4, opacity utilities are deprecated and removed from configuration
       result = TwMerge.merge("bg-red-500 bg-opacity-50")
-      
+
       # Current behavior: since bg-opacity is no longer configured as a group,
       # it's treated differently in the conflict resolution
       # The key point is that these utilities are no longer part of the config
-      assert result == "bg-opacity-50"  # Actual observed behavior
+      # Actual observed behavior
+      assert result == "bg-opacity-50"
     end
 
     @tag :v4_breaking_change
     test "text-opacity utilities should not be supported" do
       result = TwMerge.merge("text-blue-500 text-opacity-75")
       # Similar behavior - deprecated utility remains
-      assert result == "text-opacity-75"  # Actual observed behavior
+      # Actual observed behavior
+      assert result == "text-opacity-75"
     end
 
     @tag :v4_breaking_change
     test "placeholder utilities should not be supported" do
       result = TwMerge.merge("placeholder-gray-400 placeholder-opacity-50")
       # Similar behavior - deprecated utility remains
-      assert result == "placeholder-opacity-50"  # Actual observed behavior
+      # Actual observed behavior
+      assert result == "placeholder-opacity-50"
     end
   end
 

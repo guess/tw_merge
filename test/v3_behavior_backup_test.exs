@@ -1,12 +1,12 @@
 defmodule TwMerge.V3BehaviorBackupTest do
   @moduledoc """
   Comprehensive test suite that documents and validates current v3 behavior.
-  
+
   This serves as a backup/baseline before migrating to v4 support.
   These tests should continue to pass to ensure v3 compatibility is maintained.
   """
   use ExUnit.Case
-  
+
   setup do
     start_supervised!(TwMerge.Cache)
     :ok
@@ -39,20 +39,25 @@ defmodule TwMerge.V3BehaviorBackupTest do
     end
 
     test "text-opacity utilities work in v3" do
-      assert TwMerge.merge("text-black text-opacity-50 text-opacity-75") == "text-black text-opacity-75"
+      assert TwMerge.merge("text-black text-opacity-50 text-opacity-75") ==
+               "text-black text-opacity-75"
+
       assert TwMerge.merge("text-opacity-50 text-red-500") == "text-opacity-50 text-red-500"
     end
 
     test "border-opacity utilities work in v3" do
-      assert TwMerge.merge("border-red-500 border-opacity-50 border-opacity-75") == "border-red-500 border-opacity-75"
+      assert TwMerge.merge("border-red-500 border-opacity-50 border-opacity-75") ==
+               "border-red-500 border-opacity-75"
     end
 
     test "divide-opacity utilities work in v3" do
-      assert TwMerge.merge("divide-red-500 divide-opacity-50 divide-opacity-75") == "divide-red-500 divide-opacity-75"
+      assert TwMerge.merge("divide-red-500 divide-opacity-50 divide-opacity-75") ==
+               "divide-red-500 divide-opacity-75"
     end
 
     test "ring-opacity utilities work in v3" do
-      assert TwMerge.merge("ring-red-500 ring-opacity-50 ring-opacity-75") == "ring-red-500 ring-opacity-75"
+      assert TwMerge.merge("ring-red-500 ring-opacity-50 ring-opacity-75") ==
+               "ring-red-500 ring-opacity-75"
     end
   end
 
@@ -62,11 +67,13 @@ defmodule TwMerge.V3BehaviorBackupTest do
     end
 
     test "placeholder-opacity utilities work in v3" do
-      assert TwMerge.merge("placeholder-opacity-50 placeholder-opacity-75") == "placeholder-opacity-75"
+      assert TwMerge.merge("placeholder-opacity-50 placeholder-opacity-75") ==
+               "placeholder-opacity-75"
     end
 
     test "placeholder utilities with colors" do
-      assert TwMerge.merge("placeholder-gray-400 placeholder-opacity-50") == "placeholder-gray-400 placeholder-opacity-50"
+      assert TwMerge.merge("placeholder-gray-400 placeholder-opacity-50") ==
+               "placeholder-gray-400 placeholder-opacity-50"
     end
   end
 
@@ -112,7 +119,9 @@ defmodule TwMerge.V3BehaviorBackupTest do
     end
 
     test "css variables with square brackets (v3 syntax)" do
-      assert TwMerge.merge("bg-[--my-color] text-[--my-text]") == "bg-[--my-color] text-[--my-text]"
+      assert TwMerge.merge("bg-[--my-color] text-[--my-text]") ==
+               "bg-[--my-color] text-[--my-text]"
+
       assert TwMerge.merge("bg-[--primary] bg-[--secondary]") == "bg-[--secondary]"
     end
   end
@@ -155,8 +164,8 @@ defmodule TwMerge.V3BehaviorBackupTest do
     end
 
     test "mixed modifiers" do
-      assert TwMerge.merge("bg-red-500 hover:bg-blue-500 lg:hover:bg-green-500") == 
-        "bg-red-500 hover:bg-blue-500 lg:hover:bg-green-500"
+      assert TwMerge.merge("bg-red-500 hover:bg-blue-500 lg:hover:bg-green-500") ==
+               "bg-red-500 hover:bg-blue-500 lg:hover:bg-green-500"
     end
 
     test "important modifier" do
@@ -251,12 +260,14 @@ defmodule TwMerge.V3BehaviorBackupTest do
   describe "v3 performance baseline" do
     @tag :performance
     test "handles large class lists efficiently" do
-      large_class_list = Enum.map(1..100, fn i -> 
-        "bg-red-#{rem(i, 9) + 1}00 text-blue-#{rem(i, 9) + 1}00 p-#{rem(i, 8) + 1}"
-      end) |> Enum.join(" ")
-      
+      large_class_list =
+        Enum.map(1..100, fn i ->
+          "bg-red-#{rem(i, 9) + 1}00 text-blue-#{rem(i, 9) + 1}00 p-#{rem(i, 8) + 1}"
+        end)
+        |> Enum.join(" ")
+
       result = TwMerge.merge(large_class_list)
-      
+
       # Should resolve to the last occurrence of each conflicting group
       assert String.contains?(result, "bg-red-")
       assert String.contains?(result, "text-blue-")
@@ -266,13 +277,13 @@ defmodule TwMerge.V3BehaviorBackupTest do
     @tag :performance
     test "caching works correctly" do
       input = "bg-red-500 bg-blue-300 text-white"
-      
+
       # First call
       result1 = TwMerge.merge(input)
-      
+
       # Second call should use cache
       result2 = TwMerge.merge(input)
-      
+
       assert result1 == result2
       assert result1 == "bg-blue-300 text-white"
     end

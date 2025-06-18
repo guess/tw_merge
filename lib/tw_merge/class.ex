@@ -48,7 +48,9 @@ defmodule TwMerge.Class do
       if Enum.any?(map["validators"]) do
         path = Enum.join(path, "-")
 
-        case Enum.find(sort_validators(map["validators"]), fn {_key, %{"function" => validator}} -> validator.(path) end) do
+        case Enum.find(sort_validators(map["validators"]), fn {_key, %{"function" => validator}} ->
+               validator.(path)
+             end) do
           nil -> nil
           {_key, %{"group" => group}} -> group
         end
@@ -91,7 +93,9 @@ defmodule TwMerge.Class do
   end
 
   defp modifier_id(parsed_class) do
-    modifiers = parsed_class |> Keyword.get_values(:modifier) |> sort_modifiers() |> Enum.join(":")
+    modifiers =
+      parsed_class |> Keyword.get_values(:modifier) |> sort_modifiers() |> Enum.join(":")
+
     if Keyword.has_key?(parsed_class, :important), do: modifiers <> "!", else: modifiers
   end
 

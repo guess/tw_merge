@@ -121,7 +121,11 @@ defmodule TwMerge do
     if Enum.member?(acc.groups, conflict_id), do: acc, else: add_class(acc, class, config)
   end
 
-  defp add_class(acc, %{raw: raw, group: group, conflict_id: conflict_id, modifier_id: modifier_id}, config) do
+  defp add_class(
+         acc,
+         %{raw: raw, group: group, conflict_id: conflict_id, modifier_id: modifier_id},
+         config
+       ) do
     conflicting_groups =
       group
       |> conflicting_groups(config)

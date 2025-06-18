@@ -3,7 +3,7 @@ defmodule TwMerge.V4ValidatorsTest do
   Tests for new v4 validators added to support Tailwind CSS v4 syntax.
   """
   use ExUnit.Case
-  
+
   import TwMerge.Validator
 
   describe "arbitrary_variable?/1" do
@@ -11,7 +11,7 @@ defmodule TwMerge.V4ValidatorsTest do
       assert arbitrary_variable?("(--primary)")
       assert arbitrary_variable?("(--secondary-color)")
       assert arbitrary_variable?("(--spacing-4)")
-      
+
       # With labels
       assert arbitrary_variable?("(color:--brand)")
       assert arbitrary_variable?("(length:--size)")
@@ -19,11 +19,16 @@ defmodule TwMerge.V4ValidatorsTest do
     end
 
     test "rejects invalid formats" do
-      refute arbitrary_variable?("[--primary]")  # v3 square bracket syntax
-      refute arbitrary_variable?("--primary")    # no parentheses
-      refute arbitrary_variable?("()")           # empty
-      refute arbitrary_variable?("bg-red-500")   # regular class
-      refute arbitrary_variable?("(invalid")     # malformed
+      # v3 square bracket syntax
+      refute arbitrary_variable?("[--primary]")
+      # no parentheses
+      refute arbitrary_variable?("--primary")
+      # empty
+      refute arbitrary_variable?("()")
+      # regular class
+      refute arbitrary_variable?("bg-red-500")
+      # malformed
+      refute arbitrary_variable?("(invalid")
     end
   end
 
@@ -35,7 +40,8 @@ defmodule TwMerge.V4ValidatorsTest do
 
     test "rejects non-length labels" do
       refute arbitrary_variable_length?("(color:--primary)")
-      refute arbitrary_variable_length?("(--spacing)")  # no label
+      # no label
+      refute arbitrary_variable_length?("(--spacing)")
       refute arbitrary_variable_length?("(size:--width)")
     end
   end
@@ -48,7 +54,8 @@ defmodule TwMerge.V4ValidatorsTest do
 
     test "rejects non-image labels" do
       refute arbitrary_variable_image?("(color:--primary)")
-      refute arbitrary_variable_image?("(--image)")  # no label
+      # no label
+      refute arbitrary_variable_image?("(--image)")
       refute arbitrary_variable_image?("(length:--size)")
     end
   end
@@ -61,7 +68,8 @@ defmodule TwMerge.V4ValidatorsTest do
 
     test "rejects non-position labels" do
       refute arbitrary_variable_position?("(color:--primary)")
-      refute arbitrary_variable_position?("(--position)")  # no label
+      # no label
+      refute arbitrary_variable_position?("(--position)")
       refute arbitrary_variable_position?("(length:--size)")
     end
   end
@@ -69,7 +77,8 @@ defmodule TwMerge.V4ValidatorsTest do
   describe "arbitrary_variable_shadow?/1" do
     test "validates CSS variables with shadow labels" do
       assert arbitrary_variable_shadow?("(shadow:--elevation)")
-      assert arbitrary_variable_shadow?("(--drop-shadow)")  # no label should match
+      # no label should match
+      assert arbitrary_variable_shadow?("(--drop-shadow)")
     end
 
     test "rejects non-shadow labels" do
@@ -87,7 +96,8 @@ defmodule TwMerge.V4ValidatorsTest do
 
     test "rejects non-size labels" do
       refute arbitrary_variable_size?("(color:--primary)")
-      refute arbitrary_variable_size?("(--size)")  # no label
+      # no label
+      refute arbitrary_variable_size?("(--size)")
       refute arbitrary_variable_size?("(position:--top)")
     end
   end
@@ -100,7 +110,8 @@ defmodule TwMerge.V4ValidatorsTest do
 
     test "rejects non-family-name labels" do
       refute arbitrary_variable_family_name?("(color:--primary)")
-      refute arbitrary_variable_family_name?("(--font)")  # no label
+      # no label
+      refute arbitrary_variable_family_name?("(--font)")
       refute arbitrary_variable_family_name?("(font:--heading)")
     end
   end
@@ -118,13 +129,20 @@ defmodule TwMerge.V4ValidatorsTest do
     end
 
     test "rejects invalid fractions" do
-      refute fraction?("1")        # not a fraction
-      refute fraction?("0.5")      # decimal
-      refute fraction?("1/")       # incomplete
-      refute fraction?("/2")       # incomplete
-      refute fraction?("a/b")      # non-numeric
-      refute fraction?("1/2/3")    # too many parts
-      refute fraction?("bg-red")   # regular class
+      # not a fraction
+      refute fraction?("1")
+      # decimal
+      refute fraction?("0.5")
+      # incomplete
+      refute fraction?("1/")
+      # incomplete
+      refute fraction?("/2")
+      # non-numeric
+      refute fraction?("a/b")
+      # too many parts
+      refute fraction?("1/2/3")
+      # regular class
+      refute fraction?("bg-red")
     end
   end
 
@@ -138,10 +156,14 @@ defmodule TwMerge.V4ValidatorsTest do
     end
 
     test "rejects arbitrary values and variables" do
-      refute any_non_arbitrary?("[#ff0000]")        # v3 arbitrary value
-      refute any_non_arbitrary?("[length:20px]")    # v3 arbitrary value with label
-      refute any_non_arbitrary?("(--primary)")      # v4 arbitrary variable
-      refute any_non_arbitrary?("(color:--brand)")  # v4 arbitrary variable with label
+      # v3 arbitrary value
+      refute any_non_arbitrary?("[#ff0000]")
+      # v3 arbitrary value with label
+      refute any_non_arbitrary?("[length:20px]")
+      # v4 arbitrary variable
+      refute any_non_arbitrary?("(--primary)")
+      # v4 arbitrary variable with label
+      refute any_non_arbitrary?("(color:--brand)")
     end
   end
 
@@ -155,10 +177,14 @@ defmodule TwMerge.V4ValidatorsTest do
     end
 
     test "rejects non-percentage values" do
-      refute percent?("50")        # no % sign
-      refute percent?("50px")      # different unit
-      refute percent?("abc%")      # non-numeric
-      refute percent?("%50")       # % at start
+      # no % sign
+      refute percent?("50")
+      # different unit
+      refute percent?("50px")
+      # non-numeric
+      refute percent?("abc%")
+      # % at start
+      refute percent?("%50")
     end
   end
 
@@ -169,14 +195,17 @@ defmodule TwMerge.V4ValidatorsTest do
       assert arbitrary_value?("[length:20px]")
       assert number?("42")
       assert tshirt_size?("lg")
-      assert length?("px")  # length? expects unit names, not values with units
+      # length? expects unit names, not values with units
+      assert length?("px")
     end
 
     test "new validators work alongside existing ones" do
       # Test that v3 and v4 syntax can coexist
-      assert arbitrary_value?("[--old-var]")      # v3 syntax
-      assert arbitrary_variable?("(--new-var)")   # v4 syntax
-      
+      # v3 syntax
+      assert arbitrary_value?("[--old-var]")
+      # v4 syntax
+      assert arbitrary_variable?("(--new-var)")
+
       # Both should be rejected by any_non_arbitrary
       refute any_non_arbitrary?("[--old-var]")
       refute any_non_arbitrary?("(--new-var)")
@@ -187,7 +216,8 @@ defmodule TwMerge.V4ValidatorsTest do
     test "handles empty and nil values gracefully" do
       refute arbitrary_variable?("")
       refute fraction?("")
-      assert any_non_arbitrary?("")  # empty string is non-arbitrary
+      # empty string is non-arbitrary
+      assert any_non_arbitrary?("")
     end
 
     test "handles malformed parentheses" do

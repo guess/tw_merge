@@ -44,7 +44,9 @@ defmodule TwMergeTest do
     test "handles color conflicts properly" do
       assert merge("bg-grey-5 bg-hotpink") == "bg-hotpink"
       assert merge("hover:bg-grey-5 hover:bg-hotpink") == "hover:bg-hotpink"
-      assert merge(["stroke-[hsl(350_80%_0%)]", "stroke-[10px]"]) == "stroke-[hsl(350_80%_0%)] stroke-[10px]"
+
+      assert merge(["stroke-[hsl(350_80%_0%)]", "stroke-[10px]"]) ==
+               "stroke-[hsl(350_80%_0%)] stroke-[10px]"
     end
   end
 
@@ -65,15 +67,24 @@ defmodule TwMergeTest do
       assert merge(["overflow-x-auto", "hover:overflow-x-hidden", "overflow-x-scroll"]) ==
                "hover:overflow-x-hidden overflow-x-scroll"
 
-      assert merge(["overflow-x-auto", "hover:overflow-x-hidden", "hover:overflow-x-auto", "overflow-x-scroll"]) ==
+      assert merge([
+               "overflow-x-auto",
+               "hover:overflow-x-hidden",
+               "hover:overflow-x-auto",
+               "overflow-x-scroll"
+             ]) ==
                "hover:overflow-x-auto overflow-x-scroll"
 
       assert merge("col-span-1 col-span-full") == "col-span-full"
     end
 
     test "merges classes from Font Variant Numeric section correctly" do
-      assert merge(["lining-nums", "tabular-nums", "diagonal-fractions"]) == "lining-nums tabular-nums diagonal-fractions"
-      assert merge(["normal-nums", "tabular-nums", "diagonal-fractions"]) == "tabular-nums diagonal-fractions"
+      assert merge(["lining-nums", "tabular-nums", "diagonal-fractions"]) ==
+               "lining-nums tabular-nums diagonal-fractions"
+
+      assert merge(["normal-nums", "tabular-nums", "diagonal-fractions"]) ==
+               "tabular-nums diagonal-fractions"
+
       assert merge(["tabular-nums", "diagonal-fractions", "normal-nums"]) == "normal-nums"
       assert merge("tabular-nums proportional-nums") == "proportional-nums"
     end
@@ -103,17 +114,22 @@ defmodule TwMergeTest do
       assert merge("touch-pan-x touch-pan-right") == "touch-pan-right"
       assert merge("touch-none touch-pan-x") == "touch-pan-x"
       assert merge("touch-pan-x touch-none") == "touch-none"
-      assert merge(["touch-pan-x", "touch-pan-y", "touch-pinch-zoom"]) == "touch-pan-x touch-pan-y touch-pinch-zoom"
+
+      assert merge(["touch-pan-x", "touch-pan-y", "touch-pinch-zoom"]) ==
+               "touch-pan-x touch-pan-y touch-pinch-zoom"
 
       assert merge(["touch-manipulation", "touch-pan-x", "touch-pan-y", "touch-pinch-zoom"]) ==
                "touch-pan-x touch-pan-y touch-pinch-zoom"
 
-      assert merge(["touch-pan-x", "touch-pan-y", "touch-pinch-zoom", "touch-auto"]) == "touch-auto"
+      assert merge(["touch-pan-x", "touch-pan-y", "touch-pinch-zoom", "touch-auto"]) ==
+               "touch-auto"
     end
 
     test "line-clamp classes do create conflicts correctly" do
       assert merge(["overflow-auto", "inline", "line-clamp-1"]) == "line-clamp-1"
-      assert merge(["line-clamp-1", "overflow-auto", "inline"]) == "line-clamp-1 overflow-auto inline"
+
+      assert merge(["line-clamp-1", "overflow-auto", "inline"]) ==
+               "line-clamp-1 overflow-auto inline"
     end
   end
 
@@ -135,7 +151,15 @@ defmodule TwMergeTest do
                "m-[10dvh]"
              ]) == "m-[10dvh]"
 
-      assert merge(["h-[10px]", "h-[11cqw]", "h-[12cqh]", "h-[13cqi]", "h-[14cqb]", "h-[15cqmin]", "h-[16cqmax]"]) ==
+      assert merge([
+               "h-[10px]",
+               "h-[11cqw]",
+               "h-[12cqh]",
+               "h-[13cqi]",
+               "h-[14cqb]",
+               "h-[15cqmin]",
+               "h-[16cqmax]"
+             ]) ==
                "h-[16cqmax]"
 
       assert merge("z-20 z-[99]") == "z-[99]"
@@ -153,7 +177,9 @@ defmodule TwMergeTest do
 
     test "handles arbitrary length conflicts with labels and modifiers correctly" do
       assert merge("hover:m-[2px] hover:m-[length:var(--c)]") == "hover:m-[length:var(--c)]"
-      assert merge("hover:focus:m-[2px] focus:hover:m-[length:var(--c)]") == "focus:hover:m-[length:var(--c)]"
+
+      assert merge("hover:focus:m-[2px] focus:hover:m-[length:var(--c)]") ==
+               "focus:hover:m-[length:var(--c)]"
 
       assert merge("border-b border-[color:rgb(var(--color-gray-500-rgb)/50%))]") ==
                "border-b border-[color:rgb(var(--color-gray-500-rgb)/50%))]"
@@ -161,7 +187,11 @@ defmodule TwMergeTest do
       assert merge("border-[color:rgb(var(--color-gray-500-rgb)/50%))] border-b") ==
                "border-[color:rgb(var(--color-gray-500-rgb)/50%))] border-b"
 
-      assert merge(["border-b", "border-[color:rgb(var(--color-gray-500-rgb)/50%))]", "border-some-coloooor"]) ==
+      assert merge([
+               "border-b",
+               "border-[color:rgb(var(--color-gray-500-rgb)/50%))]",
+               "border-some-coloooor"
+             ]) ==
                "border-b border-some-coloooor"
     end
 
@@ -171,15 +201,34 @@ defmodule TwMergeTest do
     end
 
     test "handles ambiguous arbitrary values correctly" do
-      assert merge("mt-2 mt-[calc(theme(fontSize.4xl)/1.125)]") == "mt-[calc(theme(fontSize.4xl)/1.125)]"
-      assert merge("p-2 p-[calc(theme(fontSize.4xl)/1.125)_10px]") == "p-[calc(theme(fontSize.4xl)/1.125)_10px]"
-      assert merge("mt-2 mt-[length:theme(someScale.someValue)]") == "mt-[length:theme(someScale.someValue)]"
-      assert merge("mt-2 mt-[theme(someScale.someValue)]") == "mt-[theme(someScale.someValue)]"
-      assert merge("text-2xl text-[length:theme(someScale.someValue)]") == "text-[length:theme(someScale.someValue)]"
-      assert merge("text-2xl text-[calc(theme(fontSize.4xl)/1.125)]") == "text-[calc(theme(fontSize.4xl)/1.125)]"
-      assert merge(["bg-cover", "bg-[percentage:30%]", "bg-[length:200px_100px]"]) == "bg-[length:200px_100px]"
+      assert merge("mt-2 mt-[calc(theme(fontSize.4xl)/1.125)]") ==
+               "mt-[calc(theme(fontSize.4xl)/1.125)]"
 
-      assert merge(["bg-none", "bg-[url(.)]", "bg-[image:.]", "bg-[url:.]", "bg-[linear-gradient(.)]", "bg-gradient-to-r"]) ==
+      assert merge("p-2 p-[calc(theme(fontSize.4xl)/1.125)_10px]") ==
+               "p-[calc(theme(fontSize.4xl)/1.125)_10px]"
+
+      assert merge("mt-2 mt-[length:theme(someScale.someValue)]") ==
+               "mt-[length:theme(someScale.someValue)]"
+
+      assert merge("mt-2 mt-[theme(someScale.someValue)]") == "mt-[theme(someScale.someValue)]"
+
+      assert merge("text-2xl text-[length:theme(someScale.someValue)]") ==
+               "text-[length:theme(someScale.someValue)]"
+
+      assert merge("text-2xl text-[calc(theme(fontSize.4xl)/1.125)]") ==
+               "text-[calc(theme(fontSize.4xl)/1.125)]"
+
+      assert merge(["bg-cover", "bg-[percentage:30%]", "bg-[length:200px_100px]"]) ==
+               "bg-[length:200px_100px]"
+
+      assert merge([
+               "bg-none",
+               "bg-[url(.)]",
+               "bg-[image:.]",
+               "bg-[url:.]",
+               "bg-[linear-gradient(.)]",
+               "bg-gradient-to-r"
+             ]) ==
                "bg-gradient-to-r"
     end
   end
@@ -188,7 +237,12 @@ defmodule TwMergeTest do
     test "handles arbitrary property conflicts correctly" do
       assert merge("[paint-order:markers] [paint-order:normal]") == "[paint-order:normal]"
 
-      assert merge(["[paint-order:markers]", "[--my-var:2rem]", "[paint-order:normal]", "[--my-var:4px]"]) ==
+      assert merge([
+               "[paint-order:markers]",
+               "[--my-var:2rem]",
+               "[paint-order:normal]",
+               "[--my-var:4px]"
+             ]) ==
                "[paint-order:normal] [--my-var:4px]"
     end
 
@@ -196,12 +250,18 @@ defmodule TwMergeTest do
       assert merge("[paint-order:markers] hover:[paint-order:normal]") ==
                "[paint-order:markers] hover:[paint-order:normal]"
 
-      assert merge("hover:[paint-order:markers] hover:[paint-order:normal]") == "hover:[paint-order:normal]"
+      assert merge("hover:[paint-order:markers] hover:[paint-order:normal]") ==
+               "hover:[paint-order:normal]"
 
       assert merge("hover:focus:[paint-order:markers] focus:hover:[paint-order:normal]") ==
                "focus:hover:[paint-order:normal]"
 
-      assert merge(["[paint-order:markers]", "[paint-order:normal]", "[--my-var:2rem]", "lg:[--my-var:4px]"]) ==
+      assert merge([
+               "[paint-order:markers]",
+               "[paint-order:normal]",
+               "[--my-var:2rem]",
+               "lg:[--my-var:4px]"
+             ]) ==
                "[paint-order:normal] [--my-var:2rem] lg:[--my-var:4px]"
     end
 
@@ -212,7 +272,9 @@ defmodule TwMergeTest do
 
     test "handles important modifier correctly" do
       assert merge("![some:prop] [some:other]") == "![some:prop] [some:other]"
-      assert merge("![some:prop] [some:other] [some:one] ![some:another]") == "[some:one] ![some:another]"
+
+      assert merge("![some:prop] [some:other] [some:one] ![some:another]") ==
+               "[some:one] ![some:another]"
     end
   end
 
@@ -239,20 +301,33 @@ defmodule TwMergeTest do
       assert merge(["[&>*]:underline", "[&>*]:line-through", "[&_div]:line-through"]) ==
                "[&>*]:line-through [&_div]:line-through"
 
-      assert merge("supports-[display:grid]:flex supports-[display:grid]:grid") == "supports-[display:grid]:grid"
+      assert merge("supports-[display:grid]:flex supports-[display:grid]:grid") ==
+               "supports-[display:grid]:grid"
     end
 
     test "arbitrary variants with modifiers" do
-      assert merge("dark:lg:hover:[&>*]:underline dark:lg:hover:[&>*]:line-through") == "dark:lg:hover:[&>*]:line-through"
-      assert merge("dark:lg:hover:[&>*]:underline dark:hover:lg:[&>*]:line-through") == "dark:hover:lg:[&>*]:line-through"
-      assert merge("hover:[&>*]:underline [&>*]:hover:line-through") == "hover:[&>*]:underline [&>*]:hover:line-through"
+      assert merge("dark:lg:hover:[&>*]:underline dark:lg:hover:[&>*]:line-through") ==
+               "dark:lg:hover:[&>*]:line-through"
 
-      assert merge(["hover:dark:[&>*]:underline", "dark:hover:[&>*]:underline", "dark:[&>*]:hover:line-through"]) ==
+      assert merge("dark:lg:hover:[&>*]:underline dark:hover:lg:[&>*]:line-through") ==
+               "dark:hover:lg:[&>*]:line-through"
+
+      assert merge("hover:[&>*]:underline [&>*]:hover:line-through") ==
+               "hover:[&>*]:underline [&>*]:hover:line-through"
+
+      assert merge([
+               "hover:dark:[&>*]:underline",
+               "dark:hover:[&>*]:underline",
+               "dark:[&>*]:hover:line-through"
+             ]) ==
                "dark:hover:[&>*]:underline dark:[&>*]:hover:line-through"
     end
 
     test "arbitrary variants with complex syntax in them" do
-      assert merge(["[@media_screen{@media(hover:hover)}]:underline", "[@media_screen{@media(hover:hover)}]:line-through"]) ==
+      assert merge([
+               "[@media_screen{@media(hover:hover)}]:underline",
+               "[@media_screen{@media(hover:hover)}]:line-through"
+             ]) ==
                "[@media_screen{@media(hover:hover)}]:line-through"
 
       assert merge(
@@ -262,7 +337,8 @@ defmodule TwMergeTest do
     end
 
     test "arbitrary variants with attribute selectors" do
-      assert merge("[&[data-open]]:underline [&[data-open]]:line-through") == "[&[data-open]]:line-through"
+      assert merge("[&[data-open]]:underline [&[data-open]]:line-through") ==
+               "[&[data-open]]:line-through"
     end
 
     test "arbitrary variants with multiple attribute selectors" do
@@ -274,7 +350,8 @@ defmodule TwMergeTest do
     end
 
     test "multiple arbitrary variants" do
-      assert merge("[&>*]:[&_div]:underline [&>*]:[&_div]:line-through") == "[&>*]:[&_div]:line-through"
+      assert merge("[&>*]:[&_div]:underline [&>*]:[&_div]:line-through") ==
+               "[&>*]:[&_div]:line-through"
 
       assert merge(["[&>*]:[&_div]:underline", "[&_div]:[&>*]:line-through"]) ==
                "[&>*]:[&_div]:underline [&_div]:[&>*]:line-through"
@@ -304,7 +381,8 @@ defmodule TwMergeTest do
 
   describe "content utilities" do
     test "merges content utilities correctly" do
-      assert merge(["content-['hello']", "content-[attr(data-content)]"]) == "content-[attr(data-content)]"
+      assert merge(["content-['hello']", "content-[attr(data-content)]"]) ==
+               "content-[attr(data-content)]"
     end
   end
 
@@ -321,7 +399,10 @@ defmodule TwMergeTest do
     test "conflicts across prefix modifiers" do
       assert merge("hover:block hover:inline") == "hover:inline"
       assert merge(["hover:block", "hover:focus:inline"]) == "hover:block hover:focus:inline"
-      assert merge(["hover:block", "hover:focus:inline", "focus:hover:inline"]) == "hover:block focus:hover:inline"
+
+      assert merge(["hover:block", "hover:focus:inline", "focus:hover:inline"]) ==
+               "hover:block focus:hover:inline"
+
       assert merge("focus-within:inline focus-within:block") == "focus-within:block"
     end
 
@@ -355,7 +436,9 @@ defmodule TwMergeTest do
       assert merge(["non-tailwind-class", "inline", "block"]) == "non-tailwind-class block"
       assert merge(["inline", "block", "inline-1"]) == "block inline-1"
       assert merge(["inline", "block", "i-inline"]) == "block i-inline"
-      assert merge(["focus:inline", "focus:block", "focus:inline-1"]) == "focus:block focus:inline-1"
+
+      assert merge(["focus:inline", "focus:block", "focus:inline-1"]) ==
+               "focus:block focus:inline-1"
     end
   end
 
