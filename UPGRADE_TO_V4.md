@@ -10,8 +10,8 @@ This document outlines the comprehensive plan to upgrade TwMerge from Tailwind C
 - [x] Set up v4 compatibility testing environment
 
 ### 1.2 Backup Current State
-- [ ] Document current v3 API for migration guide
-- [ ] Create comprehensive test suite for v3 behavior
+- [x] Document current v3 API for migration guide
+- [x] Create comprehensive test suite for v3 behavior
 
 ## Phase 2: Core Infrastructure Updates
 
